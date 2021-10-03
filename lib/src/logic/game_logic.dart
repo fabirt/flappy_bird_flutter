@@ -22,17 +22,17 @@ class GameLogic {
 
   void startGame(Size world) {
     _barriers.clear();
-    _player.init(world);
     _gameState = GameState.started;
     _createBarrierTimer = 2;
     _score = 0;
+    _player.init(world);
+    _player.fall();
   }
 
   void update(double dt, Size world) {
     // Player
-    _player.update(dt, _gameState);
+    _player.update(dt);
     if (_player.y >= world.height && _gameState == GameState.started) {
-      _player.die();
       _gameState = GameState.finished;
       _audioPlayer.play(kDieSound);
     }

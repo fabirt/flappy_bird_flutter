@@ -12,5 +12,7 @@ abstract class Entity {
 
   Rect get rect => Offset(x, y) & Size(width, height);
 
+  void update(double dt);
+
   Widget draw();
 }

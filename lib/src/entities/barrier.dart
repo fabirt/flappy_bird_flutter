@@ -17,8 +17,9 @@ class Barrier extends Entity {
   final bool top;
   bool crossHalfWay = false;
 
+  @override
   void update(double dt) {
-    x = x - dt * 130;
+    x = x - 130 * dt;
   }
 
   @override

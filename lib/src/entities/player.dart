@@ -9,47 +9,38 @@ class Player extends Entity {
           height: 40,
         );
 
-  bool _isAlive = true;
-  bool _isGoingUp = false;
-  double _velocity = 0;
-  double _acc = 30;
   late Size world;
-  static const _friction = 40;
-  static const _maxVelocity = 40;
+  double _velocity = 0;
+  bool _moving = false;
+  static const double _acc = 1400;
 
   void init(Size screen) {
     world = screen;
     x = (screen.width / 2) - (width / 2);
     y = (screen.height / 2) - (height / 2);
-    _isAlive = true;
-    _isGoingUp = false;
     _velocity = 0;
+    _moving = false;
   }
 
-  void update(double dt, GameState gameState) {
-    if (gameState == GameState.idle) {
+  @override
+  void update(double dt) {
+    if (!_moving) {
       return;
     }
 
-    if (_isGoingUp && _isAlive) {
-      // jump
-      _velocity = _velocity * (1 - math.min(dt * _friction, 1)) - 10;
-      _isGoingUp = false;
-    } else if (_velocity < _maxVelocity) {
-      // apply gravity
-      _velocity = _velocity + _acc * dt;
-    }
+    // apply gravity
+    _velocity = _velocity + _acc * dt;
+    final goalY = y + _velocity * dt;
 
-    final goalY = y + _velocity;
-    y = goalY.clamp(-height, world.height).toDouble();
+    y = goalY.clamp(-height, world.height);
+  }
+
+  void fall() {
+    _moving = true;
   }
 
   void jump() {
-    _isGoingUp = true;
-  }
-
-  void die() {
-    _isAlive = false;
+    _velocity = -450;
   }
 
   bool collisionFilter(Entity other) {
@@ -61,7 +52,7 @@ class Player extends Entity {
 
   @override
   Widget draw() {
-    double angle = (_velocity.clamp(0, 10) / 10) * math.pi;
+    double angle = (_velocity.clamp(0, 600) / 600) * math.pi;
 
     return Transform.rotate(
       angle: angle,
