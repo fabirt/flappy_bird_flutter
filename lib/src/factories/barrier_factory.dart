@@ -5,21 +5,21 @@ abstract class BarrierFactory {
 }
 
 class EasyBarrierFactory extends BarrierFactory {
+  final _random = Random();
+
   @override
   BarrierPair create(Size world) {
-    final random = Random();
     const double barrierWidth = 60;
 
     final gapTopLimit = world.height / 4;
     final gapBottomLimit = world.height - world.height / 4;
 
-    final gapMinHeight = 140;
     final gapMaxHeight = gapBottomLimit - gapTopLimit;
-    final gapHeight = gapMinHeight +
-        random.nextInt(
-            (max(gapMaxHeight, gapMinHeight)).toInt() - gapMinHeight.toInt());
+    final gapHeight = kBarrierGapMinHeight +
+        _random.nextInt((max(gapMaxHeight, kBarrierGapMinHeight)).toInt() -
+            kBarrierGapMinHeight.toInt());
 
-    final topBarrierHeight = random
+    final topBarrierHeight = _random
             .nextInt((world.height - gapHeight).toInt() - gapTopLimit.toInt()) +
         gapTopLimit;
     final bottomBarrierHeight = world.height - gapHeight - topBarrierHeight;

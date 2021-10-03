@@ -2,6 +2,14 @@
 
 Basic flappy bird game made with Flutter.
 
+## Features
+
+- Score count
+- Jump physics
+- Barrier spawner
+- Collision detection
+- Audio playback
+
 ## Demo
 
 <img

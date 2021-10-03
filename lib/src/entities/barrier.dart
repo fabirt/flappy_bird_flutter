@@ -15,11 +15,17 @@ class Barrier extends Entity {
         );
 
   final bool top;
-  bool crossHalfWay = false;
+  bool _crossHalfWay = false;
+
+  bool get crossHalfWay => _crossHalfWay;
 
   @override
   void update(double dt) {
-    x = x - 130 * dt;
+    x = x - kBarrierXVelocity * dt;
+  }
+
+  void goThrough() {
+    _crossHalfWay = true;
   }
 
   @override

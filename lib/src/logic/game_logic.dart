@@ -62,7 +62,7 @@ class GameLogic {
         if (refBarrier.x < (world.width / 2 - refBarrier.width / 2) &&
             !refBarrier.crossHalfWay) {
           _audioPlayer.play(kPointSound);
-          refBarrier.crossHalfWay = true;
+          refBarrier.goThrough();
           _score++;
         }
 

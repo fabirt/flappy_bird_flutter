@@ -12,7 +12,6 @@ class Player extends Entity {
   late Size world;
   double _velocity = 0;
   bool _moving = false;
-  static const double _acc = 1400;
 
   void init(Size screen) {
     world = screen;
@@ -29,7 +28,7 @@ class Player extends Entity {
     }
 
     // apply gravity
-    _velocity = _velocity + _acc * dt;
+    _velocity = _velocity + kGravity * dt;
     final goalY = y + _velocity * dt;
 
     y = goalY.clamp(-height, world.height);
@@ -40,19 +39,20 @@ class Player extends Entity {
   }
 
   void jump() {
-    _velocity = -450;
+    _velocity = kJumpVelocity;
   }
 
   bool collisionFilter(Entity other) {
-    return rect.right > other.rect.left &&
-        rect.left < other.rect.right &&
-        rect.top < other.rect.bottom &&
-        rect.bottom > other.rect.top;
+    // add collision space
+    return rect.right > other.rect.left + 6 &&
+        rect.left < other.rect.right - 6 &&
+        rect.top < other.rect.bottom - 6 &&
+        rect.bottom > other.rect.top + 6;
   }
 
   @override
   Widget draw() {
-    double angle = (_velocity.clamp(0, 600) / 600) * math.pi;
+    final angle = (_velocity.clamp(0, 600) / 600) * math.pi;
 
     return Transform.rotate(
       angle: angle,
