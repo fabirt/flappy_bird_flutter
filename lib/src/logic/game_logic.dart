@@ -7,17 +7,18 @@ class GameLogic {
   Player _player = Player();
   GameState _gameState = GameState.idle;
   BarrierFactory _barrierFactory = EasyBarrierFactory();
-  Queue<BarrierPair> _barriers = Queue<BarrierPair>();
+  List<BarrierPair> _barriers = [];
   double _createBarrierTimer = _createBarrierTimerMax;
   int _score = 0;
 
   int get score => _score;
   Player get player => _player;
-  Queue<BarrierPair> get barriers => _barriers;
+  List<BarrierPair> get barriers => _barriers;
   GameState get gameState => _gameState;
 
   void load(Size world) {
     _player.init(world);
+    _audioPlayer.load(kWingSound);
   }
 
   void startGame(Size world) {
@@ -34,7 +35,7 @@ class GameLogic {
     _player.update(dt);
     if (_player.y >= world.height && _gameState == GameState.started) {
       _gameState = GameState.finished;
-      _audioPlayer.play(kDieSound);
+      _audioPlayer.play(kDieSound, mode: PlayerMode.LOW_LATENCY);
     }
 
     // Barrier creation
@@ -52,16 +53,17 @@ class GameLogic {
         final pair = _barriers.elementAt(i);
         pair.update(dt);
 
+        final refBarrier = pair.top;
+
         // remove barrier
-        if (pair.top.x < -pair.top.width) {
-          _barriers.removeFirst();
+        if (refBarrier.x < -refBarrier.width) {
+          _barriers.removeAt(i);
         }
 
         // update score
-        final refBarrier = pair.top;
         if (refBarrier.x < (world.width / 2 - refBarrier.width / 2) &&
             !refBarrier.crossHalfWay) {
-          _audioPlayer.play(kPointSound);
+          _audioPlayer.play(kPointSound, mode: PlayerMode.LOW_LATENCY);
           refBarrier.goThrough();
           _score++;
         }
@@ -69,7 +71,7 @@ class GameLogic {
         // check collisions
         if (_player.collisionFilter(pair.top) ||
             _player.collisionFilter(pair.bottom)) {
-          _audioPlayer.play(kHitSound);
+          _audioPlayer.play(kHitSound, mode: PlayerMode.LOW_LATENCY);
           _gameState = GameState.finished;
         }
       }
@@ -77,9 +79,7 @@ class GameLogic {
   }
 
   void jump() {
-    if (_gameState == GameState.started) {
-      _audioPlayer.play(kWingSound);
-      _player.jump();
-    }
+    _audioPlayer.play(kWingSound, mode: PlayerMode.LOW_LATENCY);
+    _player.jump();
   }
 }

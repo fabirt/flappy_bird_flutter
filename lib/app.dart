@@ -7,7 +7,7 @@ class FlappyBirdApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flappy Dash',
       debugShowCheckedModeBanner: false,
-      home: GameScreen(),
+      home: const GameScreen(),
     );
   }
 }
