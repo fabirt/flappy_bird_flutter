@@ -1,14 +1,15 @@
 part of logic;
 
 class GameLogic {
-  static const double _createBarrierTimerMax = 3;
+  static const int _maxBarrierFactoryChangeInterval = 10;
   final _audioPlayer = AudioCache(prefix: kAudioPrefix);
 
   Player _player = Player();
   GameState _gameState = GameState.idle;
   BarrierFactory _barrierFactory = EasyBarrierFactory();
   List<BarrierPair> _barriers = [];
-  double _createBarrierTimer = _createBarrierTimerMax;
+  double _createBarrierTimer = 0;
+  int _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
   int _score = 0;
 
   int get score => _score;
@@ -23,8 +24,10 @@ class GameLogic {
 
   void startGame(Size world) {
     _barriers.clear();
-    _gameState = GameState.started;
+    _barrierFactory = EasyBarrierFactory();
+    _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
     _createBarrierTimer = 2;
+    _gameState = GameState.started;
     _score = 0;
     _player.init(world);
     _player.fall();
@@ -41,7 +44,7 @@ class GameLogic {
     // Barrier creation
     _createBarrierTimer -= dt;
     if (_createBarrierTimer < 0 && _gameState == GameState.started) {
-      _createBarrierTimer = _createBarrierTimerMax;
+      _createBarrierTimer = _barrierFactory.speed;
       // create a pair of barriers
       final barriers = _barrierFactory.create(world);
       _barriers.add(barriers);
@@ -66,6 +69,7 @@ class GameLogic {
           _audioPlayer.play(kPointSound, mode: PlayerMode.LOW_LATENCY);
           refBarrier.goThrough();
           _score++;
+          _barrierFactoryChangeInterval--;
         }
 
         // check collisions
@@ -74,6 +78,16 @@ class GameLogic {
           _audioPlayer.play(kHitSound, mode: PlayerMode.LOW_LATENCY);
           _gameState = GameState.finished;
         }
+      }
+    }
+
+    // change barrier factory
+    if (_gameState == GameState.started && _barrierFactoryChangeInterval <= 0) {
+      _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+      if (_score >= 10 && _score < 20) {
+        _barrierFactory = NormalBarrierFactory();
+      } else if (score >= 20) {
+        _barrierFactory = HardBarrierFactory();
       }
     }
   }
