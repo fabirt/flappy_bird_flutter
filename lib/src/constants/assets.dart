@@ -2,6 +2,8 @@ part of constants;
 
 // Images
 const String kBgImage = 'assets/images/bg.png';
+const String kBgImage_2 = 'assets/images/bg-2.jpg';
+const String kBgImage_3 = 'assets/images/bg-3.jpg';
 const String kPlayerImage = 'assets/images/player.png';
 
 // Audio
