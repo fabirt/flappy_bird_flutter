@@ -51,7 +51,10 @@ class _GameScreenState extends State<GameScreen> {
       draw: (BuildContext context) {
         return Scaffold(
           backgroundColor: Colors.green,
-          body: _buildGameView(_logic.gameState),
+          body: ColorFiltered(
+            colorFilter: _logic.screenMask.filter,
+            child: _buildGameView(_logic.gameState),
+          ),
         );
       },
     );

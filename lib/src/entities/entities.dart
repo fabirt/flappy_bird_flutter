@@ -9,3 +9,4 @@ import 'package:flappy_bird_flutter/src/constants/constants.dart';
 
 part 'barrier.dart';
 part 'player.dart';
+part 'screen_mask.dart';

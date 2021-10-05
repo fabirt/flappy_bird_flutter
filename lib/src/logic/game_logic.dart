@@ -4,18 +4,21 @@ class GameLogic {
   static const int _maxBarrierFactoryChangeInterval = 10;
   final _audioPlayer = AudioCache(prefix: kAudioPrefix);
 
-  Player _player = Player();
+  int _score = 0;
+  int _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+  double _createBarrierTimer = 0;
   GameState _gameState = GameState.idle;
+  Player _player = Player();
   BarrierFactory _barrierFactory = EasyBarrierFactory();
   List<BarrierPair> _barriers = [];
-  double _createBarrierTimer = 0;
-  int _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
-  int _score = 0;
+  ScreenMask _screenMask = ScreenMask();
 
   int get score => _score;
   Player get player => _player;
   List<BarrierPair> get barriers => _barriers;
   GameState get gameState => _gameState;
+  BarrierFactory get barrierFactory => _barrierFactory;
+  ScreenMask get screenMask => _screenMask;
 
   void load(Size world) {
     _player.init(world);
@@ -31,6 +34,7 @@ class GameLogic {
     _score = 0;
     _player.init(world);
     _player.fall();
+    _screenMask.clear();
   }
 
   void update(double dt, Size world) {
@@ -86,10 +90,18 @@ class GameLogic {
       _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
       if (_score >= 10 && _score < 20) {
         _barrierFactory = NormalBarrierFactory();
-      } else if (score >= 20) {
+      } else if (score >= 20 && _score < 30) {
         _barrierFactory = HardBarrierFactory();
+        _audioPlayer.play(kNegativeSound, mode: PlayerMode.LOW_LATENCY);
+        _screenMask.blinkDark();
+      } else {
+        _barrierFactory = NormalBarrierFactory();
+        _screenMask.clear();
       }
     }
+
+    // screen mask
+    _screenMask.update(dt);
   }
 
   void jump() {

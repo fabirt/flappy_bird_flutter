@@ -1,6 +1,6 @@
 part of components;
 
-abstract class Entity {
+abstract class Entity implements LoopElement {
   Entity({
     required this.x,
     required this.y,
@@ -11,8 +11,6 @@ abstract class Entity {
   double x, y, width, height;
 
   Rect get rect => Offset(x, y) & Size(width, height);
-
-  void update(double dt);
 
   Widget draw();
 }
