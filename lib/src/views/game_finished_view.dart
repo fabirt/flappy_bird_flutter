@@ -32,14 +32,14 @@ class GameFinishedView extends StatelessWidget {
                   top: barrier.y,
                   width: barrier.width,
                   height: barrier.height,
-                  child: barrier.draw(),
+                  child: barrier.draw(context),
                 )),
         Positioned(
           left: player.x,
           top: player.y,
           width: player.width,
           height: player.height,
-          child: player.draw(),
+          child: player.draw(context),
         ),
         Align(
           alignment: const Alignment(0, -0.9),

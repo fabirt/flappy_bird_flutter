@@ -12,6 +12,7 @@ class Player extends Entity {
   late Size world;
   double _velocity = 0;
   bool _moving = false;
+  Character _character = Character.dash;
 
   void init(Size screen) {
     world = screen;
@@ -50,8 +51,12 @@ class Player extends Entity {
         rect.bottom > other.rect.top + 6;
   }
 
+  void setCharacter(Character character) {
+    _character = character;
+  }
+
   @override
-  Widget draw() {
+  Widget draw(BuildContext context) {
     final angle = (_velocity.clamp(0, 600) / 600) * math.pi;
 
     return Transform.rotate(
@@ -60,7 +65,7 @@ class Player extends Entity {
         width: width,
         height: height,
         child: Image(
-          image: AssetImage(kPlayerImage),
+          image: AssetImage(_character.assetImage),
         ),
       ),
     );

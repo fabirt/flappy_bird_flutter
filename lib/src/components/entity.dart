@@ -12,5 +12,5 @@ abstract class Entity implements LoopElement {
 
   Rect get rect => Offset(x, y) & Size(width, height);
 
-  Widget draw();
+  Widget draw(BuildContext context);
 }

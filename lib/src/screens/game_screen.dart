@@ -10,6 +10,15 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   final _logic = GameLogic();
 
+  @override
+  void initState() {
+    super.initState();
+    final playerExp = Provider.of<PlayerExperience>(context, listen: false);
+    playerExp.addListener(() {
+      _logic.player.setCharacter(playerExp.character);
+    });
+  }
+
   void _startGame() {
     final screen = MediaQuery.of(context).size;
     _logic.startGame(screen);

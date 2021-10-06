@@ -29,7 +29,7 @@ class Barrier extends Entity {
   }
 
   @override
-  Widget draw() {
+  Widget draw(BuildContext context) {
     final radius = Radius.circular(8);
     return SizedBox(
       width: width,

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flappy_bird_flutter/src/components/components.dart';
 import 'package:flappy_bird_flutter/src/constants/constants.dart';
+import 'package:flappy_bird_flutter/src/models/models.dart';
 
 part 'barrier.dart';
 part 'player.dart';

@@ -26,7 +26,7 @@ class GameIdleView extends StatelessWidget {
           top: player.y,
           width: player.width,
           height: player.height,
-          child: player.draw(),
+          child: player.draw(context),
         ),
         Align(
           alignment: const Alignment(0, -0.6),
