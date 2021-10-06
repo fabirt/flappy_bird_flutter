@@ -1,19 +1,10 @@
-part of logic;
+part of game;
 
 class GameLogic {
-  static const int _maxBarrierFactoryChangeInterval = 10;
   final _audioPlayer = AudioCache(prefix: kAudioPrefix);
   LevelStrategy _strategy = EasyLevelStrategy();
-  GameState _state = GameState(
-    score: 0,
-    barrierFactoryChangeInterval: _maxBarrierFactoryChangeInterval,
-    createBarrierTimer: 0,
-    gameplayState: GameplayState.idle,
-    player: Player(),
-    barrierFactory: EasyBarrierFactory(),
-    barriers: [],
-    screenMask: ScreenMask(),
-  );
+  GameState _state = GameState.initial();
+  GameplayStateListener? _listener;
 
   int get score => _state.score;
   Player get player => _state.player;
@@ -31,7 +22,7 @@ class GameLogic {
     _strategy = EasyLevelStrategy();
     _state.barriers.clear();
     _state.barrierFactory = EasyBarrierFactory();
-    _state.barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+    _state.pointsUntilLevelChange = kMaxPointsPerLevelChange;
     _state.createBarrierTimer = 2;
     _state.gameplayState = GameplayState.started;
     _state.score = 0;
@@ -45,8 +36,8 @@ class GameLogic {
     _state.player.update(dt);
     if (_state.player.y >= world.height &&
         _state.gameplayState == GameplayState.started) {
-      _state.gameplayState = GameplayState.finished;
       _audioPlayer.sfx(kDieSound);
+      finish();
     }
 
     // Barrier creation
@@ -78,22 +69,22 @@ class GameLogic {
           _audioPlayer.sfx(kPointSound);
           refBarrier.goThrough();
           _state.score++;
-          _state.barrierFactoryChangeInterval--;
+          _state.pointsUntilLevelChange--;
         }
 
         // check collisions
         if (_state.player.collisionFilter(pair.top) ||
             _state.player.collisionFilter(pair.bottom)) {
           _audioPlayer.sfx(kHitSound);
-          _state.gameplayState = GameplayState.finished;
+          finish();
         }
       }
     }
 
     // change level strategy
     if (_state.gameplayState == GameplayState.started &&
-        _state.barrierFactoryChangeInterval <= 0) {
-      _state.barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+        _state.pointsUntilLevelChange <= 0) {
+      _state.pointsUntilLevelChange = kMaxPointsPerLevelChange;
       if (_state.score >= 10 && _state.score < 20) {
         _strategy = NormalLevelStrategy();
       } else if (score >= 20 && _state.score < 30) {
@@ -112,9 +103,19 @@ class GameLogic {
     _audioPlayer.sfx(kWingSound);
     _state.player.jump();
   }
+
+  void finish() {
+    _state.gameplayState = GameplayState.finished;
+    _listener?.onFinished(score);
+  }
+
+  void setGameplayStateListener(GameplayStateListener l) {
+    _listener = l;
+  }
 }
 
 extension Sfx on AudioCache {
+  /// Play sound effect.
   void sfx(String fileName) {
     play(fileName, mode: PlayerMode.LOW_LATENCY);
   }

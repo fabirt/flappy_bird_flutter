@@ -52,7 +52,6 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                         height: 50,
                         child: Image.asset(
                           character.assetImage,
-                          fit: BoxFit.cover,
                         ),
                       ),
                     ),

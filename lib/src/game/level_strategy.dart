@@ -1,4 +1,4 @@
-part of logic;
+part of game;
 
 abstract class LevelStrategy {
   void activate(GameState state, AudioCache audio);

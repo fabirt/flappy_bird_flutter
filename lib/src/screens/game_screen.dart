@@ -7,12 +7,14 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen>
+    implements GameplayStateListener {
   final _logic = GameLogic();
 
   @override
   void initState() {
     super.initState();
+    _logic.setGameplayStateListener(this);
     final playerExp = Provider.of<PlayerExperience>(context, listen: false);
     playerExp.addListener(() {
       _logic.player.setCharacter(playerExp.character);
@@ -67,5 +69,10 @@ class _GameScreenState extends State<GameScreen> {
         );
       },
     );
+  }
+
+  @override
+  void onFinished(int score) {
+    // Save data. Update high score.
   }
 }

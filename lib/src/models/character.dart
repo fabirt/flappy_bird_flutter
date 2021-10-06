@@ -19,12 +19,12 @@ class Character extends Equatable {
     cost: 0,
   );
 
-  static const Character marcos = Character._(
+  static const Character gentleman = Character._(
     assetImage: kPlayerImage_3,
     cost: 0,
   );
 
-  static const List<Character> options = [dash, grumpy, marcos];
+  static const List<Character> options = [dash, grumpy, gentleman];
 
   @override
   List<Object?> get props => [assetImage, cost];

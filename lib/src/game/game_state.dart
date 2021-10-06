@@ -1,9 +1,9 @@
-part of logic;
+part of game;
 
 class GameState {
   GameState({
     required this.score,
-    required this.barrierFactoryChangeInterval,
+    required this.pointsUntilLevelChange,
     required this.createBarrierTimer,
     required this.gameplayState,
     required this.player,
@@ -12,8 +12,19 @@ class GameState {
     required this.screenMask,
   });
 
+  factory GameState.initial() => GameState(
+        score: 0,
+        pointsUntilLevelChange: kMaxPointsPerLevelChange,
+        createBarrierTimer: 0,
+        gameplayState: GameplayState.idle,
+        player: Player(),
+        barrierFactory: EasyBarrierFactory(),
+        barriers: [],
+        screenMask: ScreenMask(),
+      );
+
   int score;
-  int barrierFactoryChangeInterval;
+  int pointsUntilLevelChange;
   double createBarrierTimer;
   GameplayState gameplayState;
   Player player;
