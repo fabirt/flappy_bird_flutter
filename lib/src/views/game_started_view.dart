@@ -16,13 +16,17 @@ class GameStartedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playerExp = context.watch<PlayerExperience>();
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Stack(
         children: <Widget>[
-          const Positioned.fill(
-            child: Background(),
+          Positioned.fill(
+            child: Background(
+              assetImage: playerExp.backgroundImage.assetImage,
+            ),
           ),
           ...barriers
               .expand((pair) => [pair.top, pair.bottom])

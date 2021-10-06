@@ -12,10 +12,14 @@ class GameIdleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final playerExp = context.watch<PlayerExperience>();
+
     return Stack(
       children: <Widget>[
-        const Positioned.fill(
-          child: Background(),
+        Positioned.fill(
+          child: Background(
+            assetImage: playerExp.backgroundImage.assetImage,
+          ),
         ),
         Positioned(
           left: player.x,
