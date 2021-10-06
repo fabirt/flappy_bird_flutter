@@ -1,7 +1,7 @@
 part of models;
 
 class PlayerExperience extends ChangeNotifier {
-  BackgroundImage _backgroundImage = BackgroundImage.stars;
+  BackgroundImage _backgroundImage = BackgroundImage.blueSky;
   int _highScore = 0;
   int _money = 0;
 
