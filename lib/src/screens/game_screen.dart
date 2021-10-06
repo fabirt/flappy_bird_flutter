@@ -24,21 +24,21 @@ class _GameScreenState extends State<GameScreen> {
     _logic.startGame(screen);
   }
 
-  Widget _buildGameView(GameState gameState) {
-    switch (gameState) {
-      case GameState.idle:
+  Widget _buildGameView(GameplayState state) {
+    switch (state) {
+      case GameplayState.idle:
         return GameIdleView(
           player: _logic.player,
           onStart: _startGame,
         );
-      case GameState.started:
+      case GameplayState.started:
         return GameStartedView(
           score: _logic.score,
           player: _logic.player,
           barriers: _logic.barriers,
           onTap: _logic.jump,
         );
-      case GameState.finished:
+      case GameplayState.finished:
         return GameFinishedView(
           score: _logic.score,
           player: _logic.player,
@@ -46,7 +46,7 @@ class _GameScreenState extends State<GameScreen> {
           onRestart: _startGame,
         );
       default:
-        throw ArgumentError('Illegal GameState: $gameState');
+        throw ArgumentError('Illegal GameplayState: $state');
     }
   }
 
@@ -62,7 +62,7 @@ class _GameScreenState extends State<GameScreen> {
           backgroundColor: Colors.green,
           body: ColorFiltered(
             colorFilter: _logic.screenMask.filter,
-            child: _buildGameView(_logic.gameState),
+            child: _buildGameView(_logic.gameplayState),
           ),
         );
       },

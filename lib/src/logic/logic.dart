@@ -9,3 +9,5 @@ import 'package:flappy_bird_flutter/src/factories/factories.dart';
 import 'package:flappy_bird_flutter/src/utils/utils.dart';
 
 part 'game_logic.dart';
+part 'game_state.dart';
+part 'level_strategy.dart';

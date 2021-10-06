@@ -8,7 +8,7 @@ void launchedEffect(VoidCallback callback) {
   });
 }
 
-enum GameState {
+enum GameplayState {
   idle,
   started,
   finished,

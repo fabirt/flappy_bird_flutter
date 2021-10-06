@@ -3,109 +3,119 @@ part of logic;
 class GameLogic {
   static const int _maxBarrierFactoryChangeInterval = 10;
   final _audioPlayer = AudioCache(prefix: kAudioPrefix);
+  LevelStrategy _strategy = EasyLevelStrategy();
+  GameState _state = GameState(
+    score: 0,
+    barrierFactoryChangeInterval: _maxBarrierFactoryChangeInterval,
+    createBarrierTimer: 0,
+    gameplayState: GameplayState.idle,
+    player: Player(),
+    barrierFactory: EasyBarrierFactory(),
+    barriers: [],
+    screenMask: ScreenMask(),
+  );
 
-  int _score = 0;
-  int _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
-  double _createBarrierTimer = 0;
-  GameState _gameState = GameState.idle;
-  Player _player = Player();
-  BarrierFactory _barrierFactory = EasyBarrierFactory();
-  List<BarrierPair> _barriers = [];
-  ScreenMask _screenMask = ScreenMask();
-
-  int get score => _score;
-  Player get player => _player;
-  List<BarrierPair> get barriers => _barriers;
-  GameState get gameState => _gameState;
-  BarrierFactory get barrierFactory => _barrierFactory;
-  ScreenMask get screenMask => _screenMask;
+  int get score => _state.score;
+  Player get player => _state.player;
+  List<BarrierPair> get barriers => _state.barriers;
+  GameplayState get gameplayState => _state.gameplayState;
+  BarrierFactory get barrierFactory => _state.barrierFactory;
+  ScreenMask get screenMask => _state.screenMask;
 
   void load(Size world) {
-    _player.init(world);
+    _state.player.init(world);
     _audioPlayer.load(kWingSound);
   }
 
   void startGame(Size world) {
-    _barriers.clear();
-    _barrierFactory = EasyBarrierFactory();
-    _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
-    _createBarrierTimer = 2;
-    _gameState = GameState.started;
-    _score = 0;
-    _player.init(world);
-    _player.fall();
-    _screenMask.clear();
+    _strategy = EasyLevelStrategy();
+    _state.barriers.clear();
+    _state.barrierFactory = EasyBarrierFactory();
+    _state.barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+    _state.createBarrierTimer = 2;
+    _state.gameplayState = GameplayState.started;
+    _state.score = 0;
+    _state.player.init(world);
+    _state.player.fall();
+    _state.screenMask.clear();
   }
 
   void update(double dt, Size world) {
     // Player
-    _player.update(dt);
-    if (_player.y >= world.height && _gameState == GameState.started) {
-      _gameState = GameState.finished;
-      _audioPlayer.play(kDieSound, mode: PlayerMode.LOW_LATENCY);
+    _state.player.update(dt);
+    if (_state.player.y >= world.height &&
+        _state.gameplayState == GameplayState.started) {
+      _state.gameplayState = GameplayState.finished;
+      _audioPlayer.sfx(kDieSound);
     }
 
     // Barrier creation
-    _createBarrierTimer -= dt;
-    if (_createBarrierTimer < 0 && _gameState == GameState.started) {
-      _createBarrierTimer = _barrierFactory.speed;
+    _state.createBarrierTimer -= dt;
+    if (_state.createBarrierTimer < 0 &&
+        _state.gameplayState == GameplayState.started) {
+      _state.createBarrierTimer = _state.barrierFactory.speed;
       // create a pair of barriers
-      final barriers = _barrierFactory.create(world);
-      _barriers.add(barriers);
+      final barriers = _state.barrierFactory.create(world);
+      _state.barriers.add(barriers);
     }
 
     // Barriers
-    if (_gameState == GameState.started) {
-      for (int i = 0; i < _barriers.length; i++) {
-        final pair = _barriers.elementAt(i);
+    if (_state.gameplayState == GameplayState.started) {
+      for (int i = 0; i < _state.barriers.length; i++) {
+        final pair = _state.barriers.elementAt(i);
         pair.update(dt);
 
         final refBarrier = pair.top;
 
         // remove barrier
         if (refBarrier.x < -refBarrier.width) {
-          _barriers.removeAt(i);
+          _state.barriers.removeAt(i);
         }
 
         // update score
         if (refBarrier.x < (world.width / 2 - refBarrier.width / 2) &&
             !refBarrier.crossHalfWay) {
-          _audioPlayer.play(kPointSound, mode: PlayerMode.LOW_LATENCY);
+          _audioPlayer.sfx(kPointSound);
           refBarrier.goThrough();
-          _score++;
-          _barrierFactoryChangeInterval--;
+          _state.score++;
+          _state.barrierFactoryChangeInterval--;
         }
 
         // check collisions
-        if (_player.collisionFilter(pair.top) ||
-            _player.collisionFilter(pair.bottom)) {
-          _audioPlayer.play(kHitSound, mode: PlayerMode.LOW_LATENCY);
-          _gameState = GameState.finished;
+        if (_state.player.collisionFilter(pair.top) ||
+            _state.player.collisionFilter(pair.bottom)) {
+          _audioPlayer.sfx(kHitSound);
+          _state.gameplayState = GameplayState.finished;
         }
       }
     }
 
-    // change barrier factory
-    if (_gameState == GameState.started && _barrierFactoryChangeInterval <= 0) {
-      _barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
-      if (_score >= 10 && _score < 20) {
-        _barrierFactory = NormalBarrierFactory();
-      } else if (score >= 20 && _score < 30) {
-        _barrierFactory = HardBarrierFactory();
-        _audioPlayer.play(kNegativeSound, mode: PlayerMode.LOW_LATENCY);
-        _screenMask.blinkDark();
+    // change level strategy
+    if (_state.gameplayState == GameplayState.started &&
+        _state.barrierFactoryChangeInterval <= 0) {
+      _state.barrierFactoryChangeInterval = _maxBarrierFactoryChangeInterval;
+      if (_state.score >= 10 && _state.score < 20) {
+        _strategy = NormalLevelStrategy();
+      } else if (score >= 20 && _state.score < 30) {
+        _strategy = HardLevelStrategy();
       } else {
-        _barrierFactory = NormalBarrierFactory();
-        _screenMask.clear();
+        _strategy = NormalLevelStrategy();
       }
+      _strategy.activate(_state, _audioPlayer);
     }
 
     // screen mask
-    _screenMask.update(dt);
+    _state.screenMask.update(dt);
   }
 
   void jump() {
-    _audioPlayer.play(kWingSound, mode: PlayerMode.LOW_LATENCY);
-    _player.jump();
+    _audioPlayer.sfx(kWingSound);
+    _state.player.jump();
+  }
+}
+
+extension Sfx on AudioCache {
+  void sfx(String fileName) {
+    play(fileName, mode: PlayerMode.LOW_LATENCY);
   }
 }
