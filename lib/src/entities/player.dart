@@ -10,9 +10,13 @@ class Player extends Entity {
         );
 
   late Size world;
-  double _velocity = 0;
   bool _moving = false;
   Character _character = Character.dash;
+  double _velocity = 0;
+  double _gravity = kGravity;
+  double _jumpVelocity = kJumpVelocity;
+
+  double get gravity => _gravity;
 
   void init(Size screen) {
     world = screen;
@@ -29,7 +33,7 @@ class Player extends Entity {
     }
 
     // apply gravity
-    _velocity = _velocity + kGravity * dt;
+    _velocity = _velocity + _gravity * dt;
     final goalY = y + _velocity * dt;
 
     y = goalY.clamp(-height, world.height);
@@ -40,7 +44,15 @@ class Player extends Entity {
   }
 
   void jump() {
-    _velocity = kJumpVelocity;
+    _velocity = _jumpVelocity;
+  }
+
+  void setGravity(double value) {
+    _gravity = value;
+  }
+
+  void setJumpVelocity(double value) {
+    _jumpVelocity = value;
   }
 
   bool collisionFilter(Entity other) {
@@ -57,7 +69,11 @@ class Player extends Entity {
 
   @override
   Widget draw(BuildContext context) {
-    final angle = (_velocity.clamp(0, 600) / 600) * math.pi;
+    const maxSpeed = 600;
+    double angle = (_velocity.clamp(0, maxSpeed) / maxSpeed) * math.pi;
+    if (_gravity < 0) {
+      angle = (_velocity.clamp(-maxSpeed, 0) / maxSpeed) * math.pi + math.pi;
+    }
 
     return Transform.rotate(
       angle: angle,

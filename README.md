@@ -9,6 +9,8 @@ Basic flappy bird game made with Flutter.
 - Barrier spawner
 - Collision detection
 - Audio playback
+- Strategy pattern
+- Character customization
 
 ## Demo
 

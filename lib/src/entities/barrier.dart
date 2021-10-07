@@ -7,7 +7,9 @@ class Barrier extends Entity {
     required double y,
     required double width,
     required double height,
-  }) : super(
+    int speed = kDefaultBarrierSpeed,
+  })  : _speed = speed,
+        super(
           x: x,
           y: y,
           width: width,
@@ -16,16 +18,21 @@ class Barrier extends Entity {
 
   final bool top;
   bool _crossHalfWay = false;
+  int _speed;
 
   bool get crossHalfWay => _crossHalfWay;
 
   @override
   void update(double dt) {
-    x = x - kBarrierXVelocity * dt;
+    x = x - _speed * dt;
   }
 
   void goThrough() {
     _crossHalfWay = true;
+  }
+
+  void setSpeed(int speed) {
+    _speed = speed;
   }
 
   @override
@@ -67,5 +74,10 @@ class BarrierPair {
   void update(double dt) {
     top.update(dt);
     bottom.update(dt);
+  }
+
+  void setSpeed(int speed) {
+    top.setSpeed(speed);
+    bottom.setSpeed(speed);
   }
 }

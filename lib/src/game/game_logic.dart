@@ -20,22 +20,29 @@ class GameLogic {
 
   void startGame(Size world) {
     _strategy = EasyLevelStrategy();
+    _strategy.activate(_state, _audioPlayer);
     _state.barriers.clear();
-    _state.barrierFactory = EasyBarrierFactory();
     _state.pointsUntilLevelChange = kMaxPointsPerLevelChange;
     _state.createBarrierTimer = 2;
     _state.gameplayState = GameplayState.started;
     _state.score = 0;
     _state.player.init(world);
     _state.player.fall();
-    _state.screenMask.clear();
   }
 
   void update(double dt, Size world) {
     // Player
     _state.player.update(dt);
-    if (_state.player.y >= world.height &&
-        _state.gameplayState == GameplayState.started) {
+
+    bool playerHasFallen = false;
+    if (_state.player.gravity > 0) {
+      playerHasFallen = _state.player.y >= world.height;
+    } else {
+      playerHasFallen = _state.player.y <= 0;
+    }
+
+    if (playerHasFallen && _state.gameplayState == GameplayState.started) {
+      // die
       _audioPlayer.sfx(kDieSound);
       finish();
     }
@@ -54,6 +61,7 @@ class GameLogic {
     if (_state.gameplayState == GameplayState.started) {
       for (int i = 0; i < _state.barriers.length; i++) {
         final pair = _state.barriers.elementAt(i);
+        pair.setSpeed(_state.barrierSpeed);
         pair.update(dt);
 
         final refBarrier = pair.top;
@@ -64,7 +72,7 @@ class GameLogic {
         }
 
         // update score
-        if (refBarrier.x < (world.width / 2 - refBarrier.width / 2) &&
+        if (refBarrier.x < (world.width / 2 - refBarrier.width) &&
             !refBarrier.crossHalfWay) {
           _audioPlayer.sfx(kPointSound);
           refBarrier.goThrough();

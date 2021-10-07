@@ -3,6 +3,7 @@ part of game;
 class GameState {
   GameState({
     required this.score,
+    required this.barrierSpeed,
     required this.pointsUntilLevelChange,
     required this.createBarrierTimer,
     required this.gameplayState,
@@ -14,6 +15,7 @@ class GameState {
 
   factory GameState.initial() => GameState(
         score: 0,
+        barrierSpeed: kDefaultBarrierSpeed,
         pointsUntilLevelChange: kMaxPointsPerLevelChange,
         createBarrierTimer: 0,
         gameplayState: GameplayState.idle,
@@ -24,6 +26,7 @@ class GameState {
       );
 
   int score;
+  int barrierSpeed;
   int pointsUntilLevelChange;
   double createBarrierTimer;
   GameplayState gameplayState;
@@ -31,4 +34,14 @@ class GameState {
   BarrierFactory barrierFactory;
   List<BarrierPair> barriers;
   ScreenMask screenMask;
+
+  void resetBarrierSpeed() {
+    barrierSpeed = kDefaultBarrierSpeed;
+  }
+
+  void resetGravity() {
+    player
+      ..setGravity(kGravity)
+      ..setJumpVelocity(kJumpVelocity);
+  }
 }
