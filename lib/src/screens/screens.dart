@@ -3,6 +3,7 @@ library screens;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flappy_bird_flutter/src/constants/constants.dart';
 import 'package:flappy_bird_flutter/src/game/game.dart';
 import 'package:flappy_bird_flutter/src/models/models.dart';
 import 'package:flappy_bird_flutter/src/utils/utils.dart';

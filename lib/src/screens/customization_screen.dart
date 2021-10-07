@@ -15,7 +15,20 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
     return AlertDialog(
       content: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 26,
+                height: 26,
+                child: Image.asset(kCoinImage),
+              ),
+              const SizedBox(width: 4),
+              Text(playerExp.money.toString())
+            ],
+          ),
+          const SizedBox(height: 8),
           Row(
             children: Character.options.map((Character character) {
               final index = Character.options.indexOf(character);

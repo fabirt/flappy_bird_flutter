@@ -74,5 +74,8 @@ class _GameScreenState extends State<GameScreen>
   @override
   void onFinished(int score) {
     // Save data. Update high score.
+    final playerExp = context.read<PlayerExperience>();
+    playerExp.addMoney(score);
+    playerExp.changeHighScore(score);
   }
 }

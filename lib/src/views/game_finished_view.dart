@@ -57,7 +57,40 @@ class GameFinishedView extends StatelessWidget {
         ),
         Align(
           alignment: const Alignment(0, 0.6),
-          child: RestartButton(onPressed: onRestart),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RestartButton(onPressed: onRestart),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.green,
+                    ),
+                    child: const Icon(Icons.settings),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => CustomizationScreen(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.green,
+                    ),
+                    child: const Icon(Icons.auto_fix_high),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );

@@ -4,6 +4,7 @@ part of constants;
 const String kBgImage = 'assets/images/bg.png';
 const String kBgImage_2 = 'assets/images/bg-2.png';
 const String kBgImage_3 = 'assets/images/bg-3.png';
+const String kCoinImage = 'assets/images/coin.png';
 const String kPlayerImage_1 = 'assets/images/dash.png';
 const String kPlayerImage_2 = 'assets/images/grumpy.png';
 const String kPlayerImage_3 = 'assets/images/gentleman.png';

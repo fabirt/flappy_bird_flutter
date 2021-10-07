@@ -22,8 +22,10 @@ class PlayerExperience extends ChangeNotifier {
   }
 
   void changeHighScore(int value) {
-    _highScore = value;
-    notifyListeners();
+    if (value > _highScore) {
+      _highScore = value;
+      notifyListeners();
+    }
   }
 
   void addMoney(int value) {
